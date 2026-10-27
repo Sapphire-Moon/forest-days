@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Forest Days</title>
+  <meta name="description" content="A cozy forest planner: plan your day, Totoro reminds you, and on-time tasks grow your own little world.">
+  <meta name="theme-color" content="#8fc47a">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌰</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="defs-host" aria-hidden="true"></div>
+  <div class="sky-deco" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-totoro" id="brandTotoro"></div>
+      <div>
+        <h1>Forest Days</h1>
+        <p id="greeting">Welcome to the forest</p>
+      </div>
+    </div>
+    <div class="stats">
+      <span class="stat" title="Acorns — earn them by finishing tasks on time"><b id="acornCount">0</b> 🌰</span>
+      <span class="stat" title="Perfect-day streak"><b id="streakCount">0</b> 🔥</span>
+      <button class="avatar-btn" id="avatarBtn" title="Change my character"></button>
+      <button class="icon-btn" id="muteBtn" title="Sound on/off">🔊</button>
+      <button class="icon-btn" id="settingsBtn" title="Settings">⚙️</button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="today">🗓️ <span>My Day</span></button>
+    <button class="tab" data-tab="adventure">🌳 <span>Adventure</span></button>
+    <button class="tab" data-tab="world">🏡 <span>My World</span></button>
+    <button class="tab" data-tab="journal">📔 <span>Journal</span></button>
+  </nav>
+
+  <main>
+    <!-- MY DAY -->
+    <section class="page active" id="page-today">
+      <div class="today-grid">
+        <div class="card totoro-card">
+          <div class="totoro-big" id="totoroBig"></div>
+          <div class="speech" id="totoroMsg">Hmm-mmm!</div>
+        </div>
+
+        <div class="card plan-card">
+          <h2>🌱 Plant a task</h2>
+          <form id="taskForm" autocomplete="off">
+            <label>What will you do?
+              <input id="fTitle" maxlength="60" placeholder="e.g. Math homework" required>
+            </label>
+            <label>Kind of task
+              <select id="fType"></select>
+            </label>
+            <div class="row">
+              <label>Day <input type="date" id="fDate" required></label>
+              <label>Start <input type="time" id="fStart" required></label>
+            </div>
+            <label>How long?
+              <select id="fDur">
+                <option value="10">10 min</option><option value="15">15 min</option><option value="20">20 min</option>
+                <option value="30" selected>30 min</option><option value="45">45 min</option><option value="60">1 hour</option>
+                <option value="90">1½ hours</option><option value="120">2 hours</option><option value="180">3 hours</option>
+                <option value="240">4 hours</option><option value="480">8 hours</option>
+              </select>
+            </label>
+            <p class="hint" id="fHint"></p>
+            <button class="btn primary" type="submit">Plant it 🌱</button>
+          </form>
+        </div>
+
+        <div class="card list-card">
+          <div class="day-nav">
+            <button class="icon-btn" id="prevDay" aria-label="Previous day">‹</button>
+            <h2 id="dayTitle">Today</h2>
+            <button class="icon-btn" id="nextDay" aria-label="Next day">›</button>
+          </div>
+          <div class="progress"><div class="progress-fill" id="dayProgress"></div></div>
+          <p class="progress-label" id="dayProgressLabel"></p>
+          <ul class="tasks" id="taskList"></ul>
+          <div class="empty" id="emptyDay" hidden>
+            <p>No tasks planted for this day yet.</p>
+            <button class="btn" id="sampleBtn">✨ Plant a sample day</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADVENTURE -->
+    <section class="page" id="page-adventure">
+      <div class="adv-grid">
+        <div class="stage" id="stage">
+          <div class="scene-host" id="sceneHost"></div>
+          <div class="hud" id="hud">
+            <div class="hud-top">
+              <span class="pill" id="hudKind"></span>
+              <h2 id="hudTitle"></h2>
+            </div>
+            <span class="place-name" id="placeName"></span>
+          </div>
+          <div class="stage-intro" id="stageIntro">
+            <h2>Where shall we go?</h2>
+            <p>Start a task from <b>My Day</b>, or visit a world to relax with its sounds.</p>
+          </div>
+        </div>
+        <div class="adv-side">
+          <div class="hud-bottom" id="hudBar2">
+            <div class="timer">
+              <span id="hudTime">--:--</span>
+              <small id="hudSub"></small>
+              <div class="progress small"><div class="progress-fill" id="hudBar"></div></div>
+            </div>
+            <div class="hud-actions">
+              <button class="btn primary" id="doneBtn">✓ I'm done!</button>
+              <button class="btn ghost" id="soundBtn">🎧 Sounds</button>
+              <input type="range" id="volume" min="0" max="1" step="0.05" aria-label="Volume">
+              <button class="btn ghost" id="leaveBtn">Leave</button>
+            </div>
+          </div>
+          <div class="card play-card" id="playCard" hidden><div id="game"></div></div>
+          <div class="card">
+            <h3>Up next</h3>
+            <div class="quick" id="quickTasks"></div>
+            <h3>Visit a world <small>(no acorns, just cozy vibes)</small></h3>
+            <div class="vibes" id="vibes"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MY WORLD -->
+    <section class="page" id="page-world">
+      <div class="world-grid">
+        <div class="card garden-card">
+          <div class="garden-wrap">
+            <svg id="garden" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice"></svg>
+          </div>
+          <div class="garden-tools">
+            <span class="hint">Drag things to arrange your world. Tap one to select it.</span>
+            <button class="btn small" id="flipBtn" disabled>↔ Flip</button>
+            <button class="btn small" id="storeBtn" disabled>📦 Put away</button>
+          </div>
+        </div>
+        <div class="card shop-card">
+          <div class="shop-tabs">
+            <button class="chip active" data-shop="shop">🛍️ Forest shop</button>
+            <button class="chip" data-shop="storage">📦 Storage <b id="storageCount"></b></button>
+          </div>
+          <div class="lock" id="shopLock" hidden>
+            <div class="lock-inner">
+            <div class="lock-totoro" id="lockTotoro"></div>
+            <h3>The forest shop is resting today</h3>
+            <p>A task missed its deadline today, so new items can't be unlocked until tomorrow. You can still arrange your world — and finish tomorrow's tasks on time to wake the shop up! 🌙</p>
+            </div>
+          </div>
+          <div class="shop-list" id="shopList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- JOURNAL -->
+    <section class="page" id="page-journal">
+      <div class="stat-cards" id="statCards"></div>
+      <div class="journal-grid">
+        <div class="card">
+          <h2>This week</h2>
+          <div class="week" id="weekChart"></div>
+          <div class="legend"><span><i class="ok"></i>on time</span><span><i class="late"></i>late / missed</span></div>
+          <h3>Where my time went</h3>
+          <div class="cats" id="catBars"></div>
+        </div>
+        <div class="card diary">
+          <h2>Today's diary</h2>
+          <p class="hint">How did today feel?</p>
+          <div class="moods" id="moods"></div>
+          <textarea id="note" rows="5" maxlength="1000" placeholder="Dear diary, today I…"></textarea>
+          <p class="hint" id="noteSaved"></p>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Memory lane</h2>
+        <div class="history" id="history"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Totoro reminder toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <div class="toast-totoro" id="toastTotoro"></div>
+    <div class="toast-body">
+      <p id="toastMsg"></p>
+      <div class="toast-actions">
+        <button class="btn small primary" id="toastStart" hidden>▶ Start now</button>
+        <button class="btn small ghost" id="toastClose">OK!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Welcome -->
+  <dialog id="welcome">
+    <form method="dialog" class="modal">
+      <div class="modal-totoro" id="welcomeTotoro"></div>
+      <h2>Welcome to the forest!</h2>
+      <p>I'm Totoro. I'll help you plan your day and remind you when it's time.</p>
+      <ul class="rules">
+        <li>🌱 Plant your tasks for the day with a start time.</li>
+        <li>🔔 I'll remind you before and when each task starts.</li>
+        <li>🌰 Finish on time to earn acorns and decorate your own world.</li>
+        <li>🍂 Miss a deadline and the forest shop rests for the day.</li>
+      </ul>
+      <label>What's your name, little traveller?
+        <input id="nameInput" maxlength="24" placeholder="Your name" required>
+      </label>
+      <div class="pick-label">Choose who you'll be in the forest:</div>
+      <div class="avatar-grid" id="welcomeAvatars"></div>
+      <button class="btn primary" id="welcomeGo" value="go">Enter the forest 🌳</button>
+    </form>
+  </dialog>
+
+  <!-- Settings -->
+  <dialog id="settings">
+    <form method="dialog" class="modal">
+      <h2>⚙️ Settings</h2>
+      <label>Name <input id="sName" maxlength="24"></label>
+      <div class="pick-label">My character</div>
+      <div class="avatar-grid" id="settingsAvatars"></div>
+      <label class="check"><input type="checkbox" id="sMusic"> Gentle music-box melody with the ambience</label>
+      <label class="check"><input type="checkbox" id="sNotify"> Desktop notifications for Totoro's reminders</label>
+      <p class="hint">Reminders work while this page is open in a tab (it can be in the background).</p>
+      <div class="row">
+        <button type="button" class="btn small" id="exportBtn">⬇ Backup my data</button>
+        <label class="btn small file-btn">⬆ Restore backup<input type="file" id="importFile" accept="application/json" hidden></label>
+      </div>
+      <button type="button" class="btn small danger" id="resetBtn">Start over (erase everything)</button>
+      <button class="btn primary" value="close">Done</button>
+    </form>
+  </dialog>
+
+  <div id="confetti" aria-hidden="true"></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
